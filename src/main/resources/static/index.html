@@ -4,184 +4,45 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>JobPortal - Home</title>
-    <!-- Bootstrap 5 -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
-    <!-- Font Awesome Icons -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <style>
-        body {
-            background: #f8f9fa;
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-        }
-
-        /* ----- NAVBAR ----- */
-        .navbar {
-            background: linear-gradient(90deg, #0d6efd, #0a58ca);
-            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
-        }
-        .navbar-brand {
-            font-weight: 700;
-            font-size: 1.8rem;
-            color: #fff !important;
-        }
-        .navbar .nav-link {
-            color: rgba(255,255,255,0.9) !important;
-            font-weight: 500;
-        }
-        .navbar .nav-link:hover {
-            color: #fff !important;
-        }
-
-        /* ----- HERO ----- */
-        .hero {
-            background: linear-gradient(135deg, #0d6efd 0%, #6610f2 100%);
-            color: white;
-            padding: 4rem 0;
-            margin-bottom: 2rem;
-            border-radius: 0 0 50px 50px;
-            text-align: center;
-        }
-        .hero h1 {
-            font-weight: 700;
-            font-size: 3.5rem;
-        }
-        .hero p {
-            font-size: 1.25rem;
-            opacity: 0.9;
-        }
-
-        /* ----- SEARCH BAR ----- */
-        .search-bar {
-            display: flex;
-            gap: 10px;
-            flex-wrap: wrap;
-            justify-content: center;
-            margin-top: 1.5rem;
-        }
-        .search-bar input,
-        .search-bar button {
-            padding: 0.75rem 1.5rem;
-            border: none;
-            border-radius: 50px;
-            font-size: 1rem;
-        }
-        .search-bar input {
-            flex: 1 1 300px;
-            border: 2px solid #fff;
-            background: rgba(255,255,255,0.9);
-        }
-        .search-bar input:focus {
-            outline: none;
-            border-color: #ffc107;
-        }
-        .search-bar button {
-            background: #ffc107;
-            color: #000;
-            font-weight: 600;
-            transition: 0.3s;
-        }
-        .search-bar button:hover {
-            background: #e0a800;
-        }
-
-        /* ----- CATEGORY FILTERS ----- */
-        .category-filters {
-            display: flex;
-            gap: 10px;
-            flex-wrap: wrap;
-            justify-content: center;
-            margin: 1.5rem 0;
-        }
-        .category-filters .btn {
-            border-radius: 50px;
-            padding: 0.5rem 1.5rem;
-            font-weight: 500;
-            transition: 0.3s;
-        }
-        .category-filters .btn-outline-primary.active {
-            background: #0d6efd;
-            color: #fff;
-        }
-
-        /* ----- JOB CARDS ----- */
-        .job-card {
-            border: none;
-            border-radius: 15px;
-            box-shadow: 0 4px 12px rgba(0,0,0,0.05);
-            transition: 0.3s;
-            margin-bottom: 1.5rem;
-            overflow: hidden;
-        }
-        .job-card:hover {
-            transform: translateY(-5px);
-            box-shadow: 0 8px 24px rgba(0,0,0,0.1);
-        }
-        .job-card .card-img-top {
-            height: 180px;
-            object-fit: cover;
-            background: #e9ecef;
-        }
-        .job-card .card-body {
-            padding: 1.5rem;
-        }
-        .job-card .category-tag {
-            font-size: 0.8rem;
-            background: #e9ecef;
-            padding: 0.25rem 1rem;
-            border-radius: 50px;
-            display: inline-block;
-        }
-        .job-card .company {
-            font-weight: 600;
-            color: #0d6efd;
-        }
-        .job-card .salary {
-            color: #28a745;
-            font-weight: 600;
-        }
-
-        /* ----- PAGINATION ----- */
-        .pagination-controls {
-            display: flex;
-            justify-content: center;
-            margin-top: 1.5rem;
-        }
-        .pagination .page-link {
-            border-radius: 50px;
-            margin: 0 2px;
-        }
-        .pagination .page-item.active .page-link {
-            background: #0d6efd;
-            border-color: #0d6efd;
-        }
-
-        /* ----- JOB COUNT ----- */
-        .job-count {
-            text-align: center;
-            color: #6c757d;
-            margin-top: 2rem;
-        }
-
-        /* ----- FOOTER ----- */
-        footer {
-            background: #343a40;
-            color: #adb5bd;
-            padding: 2rem 0;
-            margin-top: 3rem;
-            text-align: center;
-        }
-        footer a {
-            color: #ffc107;
-            text-decoration: none;
-        }
-        footer a:hover {
-            color: #fff;
-        }
+        body { background: #f8f9fa; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; }
+        .navbar { background: linear-gradient(90deg, #0d6efd, #0a58ca); box-shadow: 0 4px 6px rgba(0,0,0,0.1); }
+        .navbar-brand { font-weight: 700; font-size: 1.8rem; color: #fff !important; }
+        .navbar .nav-link { color: rgba(255,255,255,0.9) !important; font-weight: 500; }
+        .navbar .nav-link:hover { color: #fff !important; }
+        .hero { background: linear-gradient(135deg, #0d6efd 0%, #6610f2 100%); color: white; padding: 4rem 0; margin-bottom: 2rem; border-radius: 0 0 50px 50px; text-align: center; }
+        .hero h1 { font-weight: 700; font-size: 3.5rem; }
+        .hero p { font-size: 1.25rem; opacity: 0.9; }
+        .search-bar { display: flex; gap: 10px; flex-wrap: wrap; justify-content: center; margin-top: 1.5rem; }
+        .search-bar input, .search-bar button { padding: 0.75rem 1.5rem; border: none; border-radius: 50px; font-size: 1rem; }
+        .search-bar input { flex: 1 1 300px; border: 2px solid #fff; background: rgba(255,255,255,0.9); }
+        .search-bar input:focus { outline: none; border-color: #ffc107; }
+        .search-bar button { background: #ffc107; color: #000; font-weight: 600; transition: 0.3s; }
+        .search-bar button:hover { background: #e0a800; }
+        .category-filters { display: flex; gap: 10px; flex-wrap: wrap; justify-content: center; margin: 1.5rem 0; }
+        .category-filters .btn { border-radius: 50px; padding: 0.5rem 1.5rem; font-weight: 500; transition: 0.3s; }
+        .category-filters .btn-outline-primary.active { background: #0d6efd; color: #fff; }
+        .job-card { border: none; border-radius: 15px; box-shadow: 0 4px 12px rgba(0,0,0,0.05); transition: 0.3s; margin-bottom: 1.5rem; overflow: hidden; }
+        .job-card:hover { transform: translateY(-5px); box-shadow: 0 8px 24px rgba(0,0,0,0.1); }
+        .job-card .card-img-top { height: 180px; object-fit: cover; background: #e9ecef; }
+        .job-card .card-body { padding: 1.5rem; }
+        .job-card .category-tag { font-size: 0.8rem; background: #e9ecef; padding: 0.25rem 1rem; border-radius: 50px; display: inline-block; }
+        .job-card .company { font-weight: 600; color: #0d6efd; }
+        .job-card .salary { color: #28a745; font-weight: 600; }
+        .job-count { text-align: center; color: #6c757d; margin-top: 2rem; }
+        .pagination-controls { display: flex; justify-content: center; margin-top: 1.5rem; }
+        .pagination .page-link { border-radius: 50px; margin: 0 2px; }
+        .pagination .page-item.active .page-link { background: #0d6efd; border-color: #0d6efd; }
+        footer { background: #343a40; color: #adb5bd; padding: 2rem 0; margin-top: 3rem; text-align: center; }
+        footer a { color: #ffc107; text-decoration: none; }
+        footer a:hover { color: #fff; }
     </style>
 </head>
 <body>
 
-<!-- ========================== NAVBAR ========================== -->
+<!-- NAVBAR -->
 <nav class="navbar navbar-expand-lg">
     <div class="container">
         <a class="navbar-brand" href="/"><i class="fas fa-briefcase me-2"></i>JobPortal</a>
@@ -197,7 +58,7 @@
     </div>
 </nav>
 
-<!-- ========================== HERO ========================== -->
+<!-- HERO -->
 <div class="hero">
     <div class="container">
         <h1><i class="fas fa-rocket me-3"></i>Find Your Dream Job</h1>
@@ -209,38 +70,26 @@
     </div>
 </div>
 
-<!-- ========================== JOBS SECTION ========================== -->
+<!-- JOBS SECTION -->
 <div class="container">
-    <!-- Category Filters -->
-    <div class="category-filters" id="categoryFilters">
-        <!-- Dynamically loaded -->
-    </div>
-
-    <!-- Job Cards -->
-    <div class="row" id="jobList">
-        <!-- Dynamically loaded -->
-    </div>
-
-    <!-- Pagination Controls -->
-    <div class="pagination-controls" id="paginationControls">
-        <!-- Dynamically loaded -->
-    </div>
-
-    <!-- Job Count -->
+    <div class="category-filters" id="categoryFilters"></div>
+    <div class="row" id="jobList"></div>
+    <div class="pagination-controls" id="paginationControls"></div>
     <div class="job-count" id="jobCount"></div>
 </div>
 
-<!-- ========================== FOOTER ========================== -->
+<!-- FOOTER -->
 <footer>
-    <div class="container">
-        <p>&copy; 2026 JobPortal. All rights reserved. | <a href="#">Privacy Policy</a> | <a href="#">Terms of Service</a></p>
-    </div>
+    <div class="container"><p>&copy; 2026 JobPortal. All rights reserved.</p></div>
 </footer>
 
-<!-- ========================== SCRIPTS ========================== -->
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
-
 <script>
+    // =============================================================
+    //  🔑 SET YOUR DEPLOYED API URL HERE
+    // =============================================================
+    const API_BASE_URL = 'https://jobportal-1-jw11.onrender.com';
+
     // =============================================================
     //  GLOBAL VARIABLES
     // =============================================================
@@ -252,10 +101,10 @@
     const pageSize = 10;
 
     // =============================================================
-    //  1. LOAD CATEGORIES (from backend)
+    //  1. LOAD CATEGORIES
     // =============================================================
     function loadCategories() {
-        fetch('http://localhost:8080/api/admin/categories')
+        fetch(`${API_BASE_URL}/api/admin/categories`)
             .then(res => res.json())
             .then(cats => {
                 const container = document.getElementById('categoryFilters');
@@ -276,10 +125,10 @@
     //  2. LOAD JOBS (with pagination)
     // =============================================================
     function loadJobs(keyword = '', categoryId = null, page = 0) {
-        let url = `http://localhost:8080/api/jobs/all?page=${page}&size=${pageSize}`;
+        let url = `${API_BASE_URL}/api/jobs/all?page=${page}&size=${pageSize}`;
 
         if (keyword || categoryId) {
-            url = `http://localhost:8080/api/jobs/search?keyword=${encodeURIComponent(keyword || '')}&page=${page}&size=${pageSize}`;
+            url = `${API_BASE_URL}/api/jobs/search?keyword=${encodeURIComponent(keyword || '')}&page=${page}&size=${pageSize}`;
             if (categoryId) url += `&categoryId=${categoryId}`;
         }
 
@@ -293,7 +142,6 @@
                 totalPages = data.totalPages || 0;
                 currentPage = data.currentPage || 0;
                 allJobs = jobs;
-
                 displayJobs(jobs);
                 renderPaginationControls();
                 document.getElementById('jobCount').textContent =
@@ -312,12 +160,10 @@
     // =============================================================
     function displayJobs(jobs) {
         const container = document.getElementById('jobList');
-
         if (!jobs || jobs.length === 0) {
             container.innerHTML = `<div class="col-12"><div class="alert alert-info text-center">No jobs found.</div></div>`;
             return;
         }
-
         container.innerHTML = jobs.map(j => `
                 <div class="col-md-6 col-lg-4">
                     <div class="card job-card">
@@ -347,15 +193,11 @@
     function renderPaginationControls() {
         const container = document.getElementById('paginationControls');
         if (!container) return;
-
         if (totalPages <= 1) {
             container.innerHTML = '';
             return;
         }
-
         let html = '<ul class="pagination">';
-
-        // Previous button
         if (currentPage > 0) {
             html += `<li class="page-item">
                             <button class="page-link" onclick="loadJobs(currentKeyword, currentCategoryId, ${currentPage - 1})">
@@ -363,15 +205,11 @@
                             </button>
                         </li>`;
         }
-
-        // Page numbers
         for (let i = 0; i < totalPages; i++) {
             html += `<li class="page-item ${i === currentPage ? 'active' : ''}">
                             <button class="page-link" onclick="loadJobs(currentKeyword, currentCategoryId, ${i})">${i + 1}</button>
                         </li>`;
         }
-
-        // Next button
         if (currentPage < totalPages - 1) {
             html += `<li class="page-item">
                             <button class="page-link" onclick="loadJobs(currentKeyword, currentCategoryId, ${currentPage + 1})">
@@ -379,7 +217,6 @@
                             </button>
                         </li>`;
         }
-
         html += '</ul>';
         container.innerHTML = html;
     }
@@ -390,7 +227,6 @@
     function searchJobs() {
         currentKeyword = document.getElementById('searchInput').value.trim();
         currentCategoryId = null;
-        // Reset active category button
         document.querySelectorAll('#categoryFilters .btn').forEach(b => b.classList.remove('active'));
         document.querySelector('#categoryFilters .btn:first-child')?.classList.add('active');
         loadJobs(currentKeyword, null, 0);
@@ -403,15 +239,12 @@
         currentCategoryId = categoryId;
         currentKeyword = '';
         document.getElementById('searchInput').value = '';
-
-        // Update active button
         document.querySelectorAll('#categoryFilters .btn').forEach(b => b.classList.remove('active'));
         if (categoryId === null) {
             document.querySelector('#categoryFilters .btn:first-child')?.classList.add('active');
         } else {
             document.querySelector(`#categoryFilters .btn[data-id="${categoryId}"]`)?.classList.add('active');
         }
-
         loadJobs('', categoryId, 0);
     }
 
