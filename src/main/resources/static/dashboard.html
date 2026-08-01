@@ -41,8 +41,6 @@
     </style>
 </head>
 <body>
-
-<!-- ===== NAVBAR ===== -->
 <nav class="navbar navbar-expand-lg">
     <div class="container">
         <a class="navbar-brand" href="/"><i class="fas fa-briefcase me-2"></i>JobPortal</a>
@@ -51,20 +49,22 @@
     </div>
 </nav>
 
-<!-- ===== MAIN CONTENT ===== -->
 <div class="container">
     <h2 class="mb-4"><i class="fas fa-tachometer-alt me-2"></i>Welcome, <span id="welcomeName">User</span></h2>
     <div id="roleSpecific"></div>
 </div>
 
-<!-- ===== FOOTER ===== -->
 <footer>
     <div class="container"><p>&copy; 2026 JobPortal. All rights reserved.</p></div>
 </footer>
 
-<!-- ===== SCRIPTS ===== -->
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
 <script>
+    // =============================================================
+    //  🔑 SET YOUR DEPLOYED API URL HERE
+    // =============================================================
+    const API_BASE_URL = 'https://jobportal-1-jw11.onrender.com';
+
     // =============================================================
     //  1. AUTH CHECK & USER INFO
     // =============================================================
@@ -72,17 +72,17 @@
     const role = localStorage.getItem('role');
     const fullName = localStorage.getItem('fullName') || 'User';
 
-    if (!userId) window.location.href = 'login.html';
-    if (role === 'ADMIN') window.location.href = 'admin-dashboard.html';
+    if (!userId) window.location.href = `${API_BASE_URL}/login.html`;
+    if (role === 'ADMIN') window.location.href = `${API_BASE_URL}/admin-dashboard.html`;
 
     document.getElementById('userName').textContent = fullName;
     document.getElementById('welcomeName').textContent = fullName;
 
     // =============================================================
-    //  2. UPDATE STATUS FUNCTION (FIXED)
+    //  2. UPDATE STATUS FUNCTION
     // =============================================================
     function updateStatus(applicationId, newStatus) {
-        fetch(`http://localhost:8080/api/applications/${applicationId}/status?status=${newStatus}`, {
+        fetch(`${API_BASE_URL}/api/applications/${applicationId}/status?status=${newStatus}`, {
             method: 'PUT'
         })
             .then(res => {
@@ -101,7 +101,7 @@
     // =============================================================
     function logout() {
         localStorage.clear();
-        window.location.href = 'index.html';
+        window.location.href = `${API_BASE_URL}/index.html`;
     }
 
     // =============================================================
@@ -109,7 +109,7 @@
     // =============================================================
     if (role === 'EMPLOYER') {
         let categories = [];
-        fetch('http://localhost:8080/api/admin/categories')
+        fetch(`${API_BASE_URL}/api/admin/categories`)
             .then(res => res.json())
             .then(data => {
                 categories = data;
@@ -204,7 +204,7 @@
                 e.preventDefault();
                 const fullName = document.getElementById('profileName').value;
                 const password = document.getElementById('profilePassword').value;
-                fetch(`http://localhost:8080/api/users/${userId}`, {
+                fetch(`${API_BASE_URL}/api/users/${userId}`, {
                     method: 'PUT',
                     headers: {'Content-Type': 'application/json'},
                     body: JSON.stringify({ fullName, password })
@@ -233,7 +233,7 @@
                 };
                 const categoryId = document.getElementById('category').value;
                 if (!categoryId) { alert('Please select a category'); return; }
-                fetch(`http://localhost:8080/api/jobs/post?employerId=${userId}&categoryId=${categoryId}`, {
+                fetch(`${API_BASE_URL}/api/jobs/post?employerId=${userId}&categoryId=${categoryId}`, {
                     method: 'POST',
                     headers: {'Content-Type': 'application/json'},
                     body: JSON.stringify(job)
@@ -250,7 +250,7 @@
 
         // Load all applications (across all jobs)
         function loadAllApplications() {
-            fetch('http://localhost:8080/api/jobs/all')
+            fetch(`${API_BASE_URL}/api/jobs/all`)
                 .then(res => res.json())
                 .then(jobs => {
                     const myJobs = jobs.filter(j => j.employer && j.employer.id === Number(userId));
@@ -261,7 +261,7 @@
                     }
                     let allApps = [];
                     let fetchPromises = myJobs.map(job =>
-                        fetch(`http://localhost:8080/api/applications/job-applications/${job.id}`)
+                        fetch(`${API_BASE_URL}/api/applications/job-applications/${job.id}`)
                             .then(res => res.json())
                             .then(apps => {
                                 apps.forEach(a => a.jobTitle = job.title);
@@ -304,7 +304,7 @@
                             <td>${a.coverLetter ? a.coverLetter.substring(0, 50) + (a.coverLetter.length > 50 ? '...' : '') : '—'}</td>
                             <td>
                                 ${a.resumePath ?
-                    `<a href="http://localhost:8080/api/applications/download-resume/${a.resumePath}" target="_blank" class="btn btn-sm btn-success">
+                    `<a href="${API_BASE_URL}/api/applications/download-resume/${a.resumePath}" target="_blank" class="btn btn-sm btn-success">
                                         <i class="fas fa-file-pdf me-1"></i>Download
                                     </a>` :
                     '<span class="text-muted">No resume</span>'
@@ -328,7 +328,7 @@
 
         // Load posted jobs (with edit/delete)
         function loadPostedJobs() {
-            fetch('http://localhost:8080/api/jobs/all')
+            fetch(`${API_BASE_URL}/api/jobs/all`)
                 .then(res => res.json())
                 .then(jobs => {
                     const myJobs = jobs.filter(j => j.employer && j.employer.id === Number(userId));
@@ -370,7 +370,7 @@
 
         // View applicants (modal)
         window.viewApplicants = function(jobId) {
-            fetch(`http://localhost:8080/api/applications/job-applications/${jobId}`)
+            fetch(`${API_BASE_URL}/api/applications/job-applications/${jobId}`)
                 .then(res => res.json())
                 .then(apps => {
                     let html = '<div class="modal-content p-3">';
@@ -391,7 +391,7 @@
                                                 <option value="REJECTED" ${a.status === 'REJECTED' ? 'selected' : ''}>Reject</option>
                                             </select>
                                         </p>
-                                        ${a.resumePath ? `<p><a href="http://localhost:8080/api/applications/download-resume/${a.resumePath}" target="_blank" class="btn btn-sm btn-success"><i class="fas fa-file-pdf me-1"></i>Download Resume</a></p>` : ''}
+                                        ${a.resumePath ? `<p><a href="${API_BASE_URL}/api/applications/download-resume/${a.resumePath}" target="_blank" class="btn btn-sm btn-success"><i class="fas fa-file-pdf me-1"></i>Download Resume</a></p>` : ''}
                                         <hr>
                                     </div>
                                 `;
@@ -408,10 +408,10 @@
 
         // Edit Job
         window.editJob = function(jobId) {
-            fetch(`http://localhost:8080/api/jobs/${jobId}`)
+            fetch(`${API_BASE_URL}/api/jobs/${jobId}`)
                 .then(res => res.json())
                 .then(job => {
-                    fetch('http://localhost:8080/api/admin/categories')
+                    fetch(`${API_BASE_URL}/api/admin/categories`)
                         .then(res => res.json())
                         .then(cats => {
                             const modal = document.createElement('div');
@@ -450,7 +450,7 @@
                                     imageUrl: document.getElementById('editImageUrl').value
                                 };
                                 const categoryId = document.getElementById('editCategory').value;
-                                fetch(`http://localhost:8080/api/jobs/${jobId}?categoryId=${categoryId}`, {
+                                fetch(`${API_BASE_URL}/api/jobs/${jobId}?categoryId=${categoryId}`, {
                                     method: 'PUT',
                                     headers: {'Content-Type': 'application/json'},
                                     body: JSON.stringify(updatedJob)
@@ -471,7 +471,7 @@
         // Delete Job
         window.deleteJob = function(jobId) {
             if (confirm('⚠️ Delete this job? This cannot be undone.')) {
-                fetch(`http://localhost:8080/api/jobs/${jobId}`, { method: 'DELETE' })
+                fetch(`${API_BASE_URL}/api/jobs/${jobId}`, { method: 'DELETE' })
                     .then(res => res.json())
                     .then(data => {
                         alert('✅ Job deleted!');
@@ -484,7 +484,7 @@
 
         // Profile load
         function loadProfile() {
-            fetch(`http://localhost:8080/api/users/${userId}`)
+            fetch(`${API_BASE_URL}/api/users/${userId}`)
                 .then(res => res.json())
                 .then(user => {
                     document.getElementById('profileName').value = user.fullName || '';
@@ -544,9 +544,9 @@
         let currentPage = 0, totalPages = 0, pageSize = 10, currentKeyword = '';
 
         function loadJobs(keyword = '', page = 0) {
-            let url = `http://localhost:8080/api/jobs/all?page=${page}&size=${pageSize}`;
+            let url = `${API_BASE_URL}/api/jobs/all?page=${page}&size=${pageSize}`;
             if (keyword) {
-                url = `http://localhost:8080/api/jobs/search?keyword=${encodeURIComponent(keyword)}&page=${page}&size=${pageSize}`;
+                url = `${API_BASE_URL}/api/jobs/search?keyword=${encodeURIComponent(keyword)}&page=${page}&size=${pageSize}`;
             }
             fetch(url)
                 .then(res => res.json())
@@ -646,7 +646,7 @@
                 formData.append('coverLetter', coverLetter);
                 formData.append('resume', file);
 
-                fetch('http://localhost:8080/api/applications/apply', { method: 'POST', body: formData })
+                fetch(`${API_BASE_URL}/api/applications/apply`, { method: 'POST', body: formData })
                     .then(res => res.json())
                     .then(data => {
                         alert('✅ Application submitted!');
@@ -658,7 +658,7 @@
         };
 
         function loadMyApplications() {
-            fetch(`http://localhost:8080/api/applications/my-applications/${userId}`)
+            fetch(`${API_BASE_URL}/api/applications/my-applications/${userId}`)
                 .then(res => res.json())
                 .then(apps => {
                     const container = document.getElementById('myApplications');
@@ -676,7 +676,7 @@
                                     </h5>
                                     <p><strong>${a.job.company}</strong> - ${a.job.location}</p>
                                     <p><em>Cover Letter:</em> ${a.coverLetter || 'N/A'}</p>
-                                    ${a.resumePath ? `<p><a href="http://localhost:8080/api/applications/download-resume/${a.resumePath}" target="_blank" class="btn btn-sm btn-success"><i class="fas fa-file-pdf me-1"></i>Download Resume</a></p>` : ''}
+                                    ${a.resumePath ? `<p><a href="${API_BASE_URL}/api/applications/download-resume/${a.resumePath}" target="_blank" class="btn btn-sm btn-success"><i class="fas fa-file-pdf me-1"></i>Download Resume</a></p>` : ''}
                                 </div>
                             </div>
                         `).join('');
@@ -684,7 +684,7 @@
         }
 
         function loadProfile() {
-            fetch(`http://localhost:8080/api/users/${userId}`)
+            fetch(`${API_BASE_URL}/api/users/${userId}`)
                 .then(res => res.json())
                 .then(user => {
                     document.getElementById('profileName').value = user.fullName || '';
@@ -696,7 +696,7 @@
             e.preventDefault();
             const fullName = document.getElementById('profileName').value;
             const password = document.getElementById('profilePassword').value;
-            fetch(`http://localhost:8080/api/users/${userId}`, {
+            fetch(`${API_BASE_URL}/api/users/${userId}`, {
                 method: 'PUT',
                 headers: {'Content-Type': 'application/json'},
                 body: JSON.stringify({ fullName, password })
