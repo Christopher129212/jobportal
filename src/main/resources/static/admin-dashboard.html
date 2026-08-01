@@ -8,6 +8,7 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <style>
+        /* (same styles – include them) */
         body { background: #f8f9fa; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; }
         .navbar { background: linear-gradient(90deg, #0d6efd, #0a58ca); box-shadow: 0 4px 6px rgba(0,0,0,0.1); }
         .navbar-brand { font-weight: 700; font-size: 1.8rem; color: #fff !important; }
@@ -143,7 +144,7 @@
     }
 
     // =============================================================
-    //  UPDATE STATUS (FIXED)
+    //  UPDATE STATUS
     // =============================================================
     function updateStatus(applicationId, newStatus) {
         fetch(`${API_BASE_URL}/api/applications/${applicationId}/status?status=${newStatus}`, {
@@ -155,8 +156,8 @@
             })
             .then(data => {
                 alert('✅ Status updated to ' + newStatus);
-                loadApplications(); // Refresh table
-                loadCharts();       // Refresh charts
+                loadApplications();
+                loadCharts();
             })
             .catch(err => alert('❌ Error: ' + err.message));
     }
@@ -183,7 +184,9 @@
                                         <td>${u.fullName}</td>
                                         <td>${u.email}</td>
                                         <td><span class="badge ${u.role === 'ADMIN' ? 'badge-admin' : u.role === 'EMPLOYER' ? 'badge-employer' : 'badge-seeker'}">${u.role}</span></td>
-                                        <td>${u.role !== 'ADMIN' ? `<button class="btn-danger-sm" onclick="deleteUser(${u.id})"><i class="fas fa-trash me-1"></i>Delete</button>` : 'N/A'}</td>
+                                        <td>
+                                            ${u.role !== 'ADMIN' ? `<button class="btn-danger-sm" onclick="deleteUser(${u.id})"><i class="fas fa-trash me-1"></i>Delete</button>` : 'N/A'}
+                                        </td>
                                     </tr>
                                 `).join('')}
                             </tbody>
@@ -191,7 +194,7 @@
                     `;
             })
             .catch(err => {
-                console.error(err);
+                console.error('Load users error:', err);
                 document.getElementById('usersList').innerHTML = `<div class="empty-state text-danger"><i class="fas fa-exclamation-triangle"></i>Error loading users</div>`;
             });
     }
@@ -199,8 +202,22 @@
     window.deleteUser = function(id) {
         if (confirm('⚠️ Delete this user? This cannot be undone.')) {
             fetch(`${API_BASE_URL}/api/admin/users/${id}`, { method: 'DELETE' })
-                .then(() => { alert('✅ User deleted!'); loadUsers(); loadJobs(); })
-                .catch(err => alert('❌ Error: ' + err.message));
+                .then(res => {
+                    if (!res.ok) {
+                        // Try to read error message from response
+                        return res.text().then(text => { throw new Error(text || 'Failed to delete user'); });
+                    }
+                    return res.json();
+                })
+                .then(() => {
+                    alert('✅ User deleted!');
+                    loadUsers();
+                    loadJobs();
+                })
+                .catch(err => {
+                    alert('❌ Error: ' + err.message);
+                    console.error('Delete user error:', err);
+                });
         }
     };
 
@@ -236,7 +253,7 @@
                     `;
             })
             .catch(err => {
-                console.error(err);
+                console.error('Load jobs error:', err);
                 document.getElementById('jobsList').innerHTML = `<div class="empty-state text-danger"><i class="fas fa-exclamation-triangle"></i>Error loading jobs</div>`;
             });
     }
@@ -279,7 +296,7 @@
                     `;
             })
             .catch(err => {
-                console.error(err);
+                console.error('Load categories error:', err);
                 document.getElementById('categoriesList').innerHTML = `<div class="empty-state text-danger"><i class="fas fa-exclamation-triangle"></i>Error loading categories</div>`;
             });
     }
@@ -373,7 +390,7 @@
                     `;
             })
             .catch(err => {
-                console.error(err);
+                console.error('Load applications error:', err);
                 document.getElementById('applicationsList').innerHTML =
                     `<div class="empty-state text-danger"><i class="fas fa-exclamation-triangle"></i>Error loading applications</div>`;
             });

@@ -5,7 +5,9 @@ import jakarta.persistence.*;
 import java.time.LocalDateTime;
 
 @Entity
-@Table(name = "applications")
+@Table(name = "applications", uniqueConstraints = {
+        @UniqueConstraint(columnNames = {"job_id", "job_seeker_id"})
+})
 public class Application {
 
     @Id
@@ -25,7 +27,7 @@ public class Application {
     private LocalDateTime appliedDate = LocalDateTime.now();
     private String status;
 
-    @Column(columnDefinition = "TEXT")   // ✅ Allows long cover letters
+    @Column(columnDefinition = "TEXT")
     private String coverLetter;
 
     private String resumePath;
@@ -39,6 +41,7 @@ public class Application {
         this.status = "PENDING";
     }
 
+    // ----- Getters & Setters -----
     public Long getId() { return id; }
     public void setId(Long id) { this.id = id; }
 
