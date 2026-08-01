@@ -3,57 +3,117 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Dashboard - JobPortal</title>
+    <title>Admin Dashboard - JobPortal</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <style>
         body { background: #f8f9fa; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; }
         .navbar { background: linear-gradient(90deg, #0d6efd, #0a58ca); box-shadow: 0 4px 6px rgba(0,0,0,0.1); }
         .navbar-brand { font-weight: 700; font-size: 1.8rem; color: #fff !important; }
         .navbar .nav-link, .navbar .navbar-text { color: rgba(255,255,255,0.9) !important; font-weight: 500; }
         .navbar .nav-link:hover { color: #fff !important; }
-        .container { max-width: 1200px; margin-top: 2rem; }
-        .dashboard-section { background: #fff; border-radius: 15px; padding: 1.5rem; margin-bottom: 2rem; box-shadow: 0 4px 12px rgba(0,0,0,0.05); }
-        .dashboard-section h3 { font-weight: 600; color: #0d6efd; margin-bottom: 1rem; border-bottom: 2px solid #e9ecef; padding-bottom: 0.5rem; }
-        .job-card { border: none; border-radius: 15px; box-shadow: 0 4px 12px rgba(0,0,0,0.05); transition: 0.3s; margin-bottom: 1.5rem; overflow: hidden; }
-        .job-card:hover { transform: translateY(-5px); box-shadow: 0 8px 24px rgba(0,0,0,0.1); }
-        .job-card .card-img-top { height: 150px; object-fit: cover; background: #e9ecef; }
-        .job-card .card-body { padding: 1.25rem; }
-        .job-card .category-tag { font-size: 0.75rem; background: #e9ecef; padding: 0.2rem 0.8rem; border-radius: 50px; display: inline-block; }
-        .job-card .company { font-weight: 600; color: #0d6efd; }
-        .job-card .salary { color: #28a745; font-weight: 600; }
+        .container { max-width: 1300px; margin-top: 2rem; }
+        .admin-section { background: #fff; border-radius: 15px; padding: 1.5rem; margin-bottom: 2rem; box-shadow: 0 4px 12px rgba(0,0,0,0.05); }
+        .admin-section h3 { font-weight: 600; color: #0d6efd; margin-bottom: 1rem; border-bottom: 2px solid #e9ecef; padding-bottom: 0.5rem; }
+        .admin-table { width: 100%; border-collapse: collapse; font-size: 0.9rem; }
+        .admin-table th { background: #0d6efd; color: #fff; padding: 10px 12px; text-align: left; }
+        .admin-table td { padding: 10px 12px; border-bottom: 1px solid #e9ecef; vertical-align: middle; }
+        .admin-table tr:hover { background: #f1f3f5; }
+        .btn-sm { border-radius: 50px; padding: 0.25rem 0.8rem; font-size: 0.85rem; }
+        .btn-danger-sm { background: #dc3545; color: #fff; border: none; border-radius: 50px; padding: 0.25rem 0.8rem; font-size: 0.85rem; transition: 0.3s; }
+        .btn-danger-sm:hover { background: #c82333; }
+        .btn-success-sm { background: #28a745; color: #fff; border: none; border-radius: 50px; padding: 0.25rem 0.8rem; font-size: 0.85rem; transition: 0.3s; }
+        .btn-success-sm:hover { background: #218838; }
+        .category-input-group { display: flex; gap: 10px; flex-wrap: wrap; margin-bottom: 1rem; }
+        .category-input-group input { padding: 0.5rem 1rem; border: 1px solid #ced4da; border-radius: 50px; flex: 1 1 200px; }
+        .category-input-group input:focus { outline: none; border-color: #0d6efd; box-shadow: 0 0 0 3px rgba(13,110,253,0.1); }
+        .empty-state { text-align: center; color: #6c757d; padding: 2rem 0; }
+        .empty-state i { font-size: 3rem; color: #dee2e6; display: block; margin-bottom: 0.5rem; }
         .btn-logout { background: rgba(255,255,255,0.2); border: 1px solid rgba(255,255,255,0.3); color: #fff !important; border-radius: 50px; padding: 0.3rem 1.2rem; transition: 0.3s; }
         .btn-logout:hover { background: rgba(255,255,255,0.3); }
-        .status-badge { padding: 0.3rem 0.8rem; border-radius: 50px; font-size: 0.8rem; font-weight: 600; }
-        .status-pending { background: #ffc107; color: #000; }
-        .status-accepted { background: #28a745; color: #fff; }
-        .status-rejected { background: #dc3545; color: #fff; }
-        .applications-table { width: 100%; border-collapse: collapse; }
-        .applications-table th { background: #f8f9fa; padding: 10px; text-align: left; border-bottom: 2px solid #dee2e6; }
-        .applications-table td { padding: 10px; border-bottom: 1px solid #e9ecef; vertical-align: middle; }
-        .applications-table tr:hover { background: #f8f9fa; }
-        .pagination .page-link { border-radius: 50px; margin: 0 2px; }
-        .pagination .page-item.active .page-link { background: #0d6efd; border-color: #0d6efd; }
-        .form-control, .form-select { border-radius: 50px; }
         footer { background: #343a40; color: #adb5bd; padding: 1.5rem 0; text-align: center; margin-top: 3rem; }
         footer a { color: #ffc107; text-decoration: none; }
         footer a:hover { color: #fff; }
+        .badge-admin { background: #6c757d; color: #fff; }
+        .badge-employer { background: #0d6efd; color: #fff; }
+        .badge-seeker { background: #28a745; color: #fff; }
+        .img-thumb { width: 40px; height: 40px; object-fit: cover; border-radius: 5px; }
+        .chart-container { height: 250px; margin: 10px 0; }
+        .status-badge { padding: 0.2rem 0.7rem; border-radius: 50px; font-size: 0.8rem; font-weight: 600; }
+        .status-pending { background: #ffc107; color: #000; }
+        .status-accepted { background: #28a745; color: #fff; }
+        .status-rejected { background: #dc3545; color: #fff; }
+        @media (max-width: 768px) {
+            .admin-table { font-size: 0.8rem; }
+            .admin-table th, .admin-table td { padding: 6px 8px; }
+            .category-input-group input { flex: 1 1 100%; }
+        }
     </style>
 </head>
 <body>
+
+<!-- NAVBAR -->
 <nav class="navbar navbar-expand-lg">
     <div class="container">
         <a class="navbar-brand" href="/"><i class="fas fa-briefcase me-2"></i>JobPortal</a>
-        <span class="navbar-text ms-auto me-3"><i class="fas fa-user me-1"></i><span id="userName">User</span></span>
+        <span class="navbar-text ms-auto me-3">
+                <i class="fas fa-user-shield me-1"></i> Admin: <span id="userName">Admin</span>
+            </span>
         <button class="btn-logout" onclick="logout()"><i class="fas fa-sign-out-alt me-1"></i>Logout</button>
     </div>
 </nav>
 
+<!-- MAIN CONTENT -->
 <div class="container">
-    <h2 class="mb-4"><i class="fas fa-tachometer-alt me-2"></i>Welcome, <span id="welcomeName">User</span></h2>
-    <div id="roleSpecific"></div>
+    <h2 class="mb-4"><i class="fas fa-tachometer-alt me-2"></i>System Management</h2>
+
+    <!-- Users -->
+    <div class="admin-section">
+        <h3><i class="fas fa-users me-2"></i>Users</h3>
+        <div id="usersList"><div class="empty-state"><i class="fas fa-spinner fa-spin"></i>Loading users...</div></div>
+    </div>
+
+    <!-- Jobs -->
+    <div class="admin-section">
+        <h3><i class="fas fa-briefcase me-2"></i>Jobs</h3>
+        <div id="jobsList"><div class="empty-state"><i class="fas fa-spinner fa-spin"></i>Loading jobs...</div></div>
+    </div>
+
+    <!-- Categories -->
+    <div class="admin-section">
+        <h3><i class="fas fa-tags me-2"></i>Categories</h3>
+        <div class="category-input-group">
+            <input type="text" id="newCategoryName" placeholder="Category Name">
+            <input type="text" id="newCategoryDesc" placeholder="Description (optional)">
+            <button class="btn btn-success-sm" onclick="addCategory()"><i class="fas fa-plus me-1"></i>Add Category</button>
+        </div>
+        <div id="categoriesList"><div class="empty-state"><i class="fas fa-spinner fa-spin"></i>Loading categories...</div></div>
+    </div>
+
+    <!-- Applications -->
+    <div class="admin-section">
+        <h3><i class="fas fa-file-alt me-2"></i>Applications</h3>
+        <div id="applicationsList"><div class="empty-state"><i class="fas fa-spinner fa-spin"></i>Loading applications...</div></div>
+    </div>
+
+    <!-- Charts -->
+    <div class="admin-section">
+        <h3><i class="fas fa-chart-pie me-2"></i>Analytics</h3>
+        <div class="row">
+            <div class="col-md-6">
+                <h5>Jobs by Category</h5>
+                <div class="chart-container"><canvas id="jobsByCategoryChart"></canvas></div>
+            </div>
+            <div class="col-md-6">
+                <h5>Applications by Status</h5>
+                <div class="chart-container"><canvas id="applicationsByStatusChart"></canvas></div>
+            </div>
+        </div>
+    </div>
 </div>
 
+<!-- FOOTER -->
 <footer>
     <div class="container"><p>&copy; 2026 JobPortal. All rights reserved.</p></div>
 </footer>
@@ -66,20 +126,24 @@
     const API_BASE_URL = 'https://jobportal-1-jw11.onrender.com';
 
     // =============================================================
-    //  1. AUTH CHECK & USER INFO
+    //  AUTH CHECK
     // =============================================================
     const userId = localStorage.getItem('userId');
     const role = localStorage.getItem('role');
-    const fullName = localStorage.getItem('fullName') || 'User';
-
-    if (!userId) window.location.href = `${API_BASE_URL}/login.html`;
-    if (role === 'ADMIN') window.location.href = `${API_BASE_URL}/admin-dashboard.html`;
-
+    const fullName = localStorage.getItem('fullName') || 'Admin';
+    if (!userId || role !== 'ADMIN') {
+        alert('Access denied. Admin only.');
+        window.location.href = 'login.html';
+    }
     document.getElementById('userName').textContent = fullName;
-    document.getElementById('welcomeName').textContent = fullName;
+
+    function logout() {
+        localStorage.clear();
+        window.location.href = 'index.html';
+    }
 
     // =============================================================
-    //  2. UPDATE STATUS FUNCTION
+    //  UPDATE STATUS (FIXED)
     // =============================================================
     function updateStatus(applicationId, newStatus) {
         fetch(`${API_BASE_URL}/api/applications/${applicationId}/status?status=${newStatus}`, {
@@ -91,631 +155,288 @@
             })
             .then(data => {
                 alert('✅ Status updated to ' + newStatus);
-                location.reload();
+                loadApplications(); // Refresh table
+                loadCharts();       // Refresh charts
             })
             .catch(err => alert('❌ Error: ' + err.message));
     }
 
     // =============================================================
-    //  3. LOGOUT
+    //  USERS
     // =============================================================
-    function logout() {
-        localStorage.clear();
-        window.location.href = `${API_BASE_URL}/index.html`;
+    function loadUsers() {
+        fetch(`${API_BASE_URL}/api/admin/users`)
+            .then(res => res.json())
+            .then(users => {
+                const container = document.getElementById('usersList');
+                if (!users || users.length === 0) {
+                    container.innerHTML = `<div class="empty-state"><i class="fas fa-users"></i>No users found.</div>`;
+                    return;
+                }
+                container.innerHTML = `
+                        <table class="admin-table">
+                            <thead><tr><th>ID</th><th>Name</th><th>Email</th><th>Role</th><th>Action</th></tr></thead>
+                            <tbody>
+                                ${users.map(u => `
+                                    <tr>
+                                        <td><strong>#${u.id}</strong></td>
+                                        <td>${u.fullName}</td>
+                                        <td>${u.email}</td>
+                                        <td><span class="badge ${u.role === 'ADMIN' ? 'badge-admin' : u.role === 'EMPLOYER' ? 'badge-employer' : 'badge-seeker'}">${u.role}</span></td>
+                                        <td>${u.role !== 'ADMIN' ? `<button class="btn-danger-sm" onclick="deleteUser(${u.id})"><i class="fas fa-trash me-1"></i>Delete</button>` : 'N/A'}</td>
+                                    </tr>
+                                `).join('')}
+                            </tbody>
+                        </table>
+                    `;
+            })
+            .catch(err => {
+                console.error(err);
+                document.getElementById('usersList').innerHTML = `<div class="empty-state text-danger"><i class="fas fa-exclamation-triangle"></i>Error loading users</div>`;
+            });
     }
 
+    window.deleteUser = function(id) {
+        if (confirm('⚠️ Delete this user? This cannot be undone.')) {
+            fetch(`${API_BASE_URL}/api/admin/users/${id}`, { method: 'DELETE' })
+                .then(() => { alert('✅ User deleted!'); loadUsers(); loadJobs(); })
+                .catch(err => alert('❌ Error: ' + err.message));
+        }
+    };
+
     // =============================================================
-    //  4. EMPLOYER DASHBOARD
+    //  JOBS
     // =============================================================
-    if (role === 'EMPLOYER') {
-        let categories = [];
+    function loadJobs() {
+        fetch(`${API_BASE_URL}/api/admin/jobs`)
+            .then(res => res.json())
+            .then(jobs => {
+                const container = document.getElementById('jobsList');
+                if (!jobs || jobs.length === 0) {
+                    container.innerHTML = `<div class="empty-state"><i class="fas fa-briefcase"></i>No jobs found.</div>`;
+                    return;
+                }
+                container.innerHTML = `
+                        <table class="admin-table">
+                            <thead><tr><th>ID</th><th>Image</th><th>Title</th><th>Company</th><th>Category</th><th>Employer</th><th>Action</th></tr></thead>
+                            <tbody>
+                                ${jobs.map(j => `
+                                    <tr>
+                                        <td><strong>#${j.id}</strong></td>
+                                        <td>${j.imageUrl ? `<img src="${j.imageUrl}" class="img-thumb" alt="Image">` : '<span class="text-muted">No image</span>'}</td>
+                                        <td>${j.title}</td>
+                                        <td>${j.company}</td>
+                                        <td><span class="badge bg-info text-dark">${j.category ? j.category.name : 'Uncategorized'}</span></td>
+                                        <td>${j.employer ? j.employer.fullName : 'N/A'}</td>
+                                        <td><button class="btn-danger-sm" onclick="deleteJob(${j.id})"><i class="fas fa-trash me-1"></i>Delete</button></td>
+                                    </tr>
+                                `).join('')}
+                            </tbody>
+                        </table>
+                    `;
+            })
+            .catch(err => {
+                console.error(err);
+                document.getElementById('jobsList').innerHTML = `<div class="empty-state text-danger"><i class="fas fa-exclamation-triangle"></i>Error loading jobs</div>`;
+            });
+    }
+
+    window.deleteJob = function(id) {
+        if (confirm('⚠️ Delete this job? This cannot be undone.')) {
+            fetch(`${API_BASE_URL}/api/admin/jobs/${id}`, { method: 'DELETE' })
+                .then(() => { alert('✅ Job deleted!'); loadJobs(); })
+                .catch(err => alert('❌ Error: ' + err.message));
+        }
+    };
+
+    // =============================================================
+    //  CATEGORIES
+    // =============================================================
+    function loadCategories() {
         fetch(`${API_BASE_URL}/api/admin/categories`)
             .then(res => res.json())
-            .then(data => {
-                categories = data;
-                buildEmployerDashboard();
+            .then(cats => {
+                const container = document.getElementById('categoriesList');
+                if (!cats || cats.length === 0) {
+                    container.innerHTML = `<div class="empty-state"><i class="fas fa-tags"></i>No categories found.</div>`;
+                    return;
+                }
+                container.innerHTML = `
+                        <table class="admin-table">
+                            <thead><tr><th>ID</th><th>Name</th><th>Description</th><th>Jobs Using</th><th>Action</th></tr></thead>
+                            <tbody>
+                                ${cats.map(c => `
+                                    <tr>
+                                        <td><strong>#${c.id}</strong></td>
+                                        <td><span class="badge bg-secondary">${c.name}</span></td>
+                                        <td>${c.description || '—'}</td>
+                                        <td>${c.jobs ? c.jobs.length : 0}</td>
+                                        <td><button class="btn-danger-sm" onclick="deleteCategory(${c.id})"><i class="fas fa-trash me-1"></i>Delete</button></td>
+                                    </tr>
+                                `).join('')}
+                            </tbody>
+                        </table>
+                    `;
             })
-            .catch(() => buildEmployerDashboard());
-
-        function buildEmployerDashboard() {
-            document.getElementById('roleSpecific').innerHTML = `
-                    <!-- Profile -->
-                    <div class="dashboard-section">
-                        <h3><i class="fas fa-user-edit me-2"></i>My Profile</h3>
-                        <form id="profileForm">
-                            <div class="row g-3">
-                                <div class="col-md-6">
-                                    <label class="form-label">Full Name</label>
-                                    <input type="text" id="profileName" class="form-control" placeholder="Your full name">
-                                </div>
-                                <div class="col-md-6">
-                                    <label class="form-label">New Password (leave empty to keep current)</label>
-                                    <input type="password" id="profilePassword" class="form-control" placeholder="New password">
-                                </div>
-                                <div class="col-12">
-                                    <button type="submit" class="btn btn-primary"><i class="fas fa-save me-2"></i>Update Profile</button>
-                                </div>
-                            </div>
-                        </form>
-                    </div>
-
-                    <!-- Post Job -->
-                    <div class="dashboard-section">
-                        <h3><i class="fas fa-plus-circle me-2"></i>Post a New Job</h3>
-                        <form id="postJobForm">
-                            <div class="row g-3">
-                                <div class="col-md-6">
-                                    <label class="form-label">Job Title</label>
-                                    <input type="text" id="title" class="form-control" placeholder="e.g. Senior Java Developer" required>
-                                </div>
-                                <div class="col-md-6">
-                                    <label class="form-label">Company</label>
-                                    <input type="text" id="company" class="form-control" placeholder="Company name" required>
-                                </div>
-                                <div class="col-md-6">
-                                    <label class="form-label">Location</label>
-                                    <input type="text" id="location" class="form-control" placeholder="e.g. Remote, New York" required>
-                                </div>
-                                <div class="col-md-6">
-                                    <label class="form-label">Salary</label>
-                                    <input type="text" id="salary" class="form-control" placeholder="e.g. $80,000 - $100,000" required>
-                                </div>
-                                <div class="col-12">
-                                    <label class="form-label">Description</label>
-                                    <textarea id="description" class="form-control" rows="3" placeholder="Job description..." required></textarea>
-                                </div>
-                                <div class="col-md-6">
-                                    <label class="form-label">Category</label>
-                                    <select id="category" class="form-select" required>
-                                        <option value="">Select Category</option>
-                                        ${categories.map(c => `<option value="${c.id}">${c.name}</option>`).join('')}
-                                    </select>
-                                </div>
-                                <div class="col-md-6">
-                                    <label class="form-label">Image URL (optional)</label>
-                                    <input type="text" id="imageUrl" class="form-control" placeholder="https://example.com/image.jpg">
-                                </div>
-                                <div class="col-12">
-                                    <button type="submit" class="btn btn-primary w-100"><i class="fas fa-upload me-2"></i>Post Job</button>
-                                </div>
-                            </div>
-                        </form>
-                    </div>
-
-                    <!-- All Applications -->
-                    <div class="dashboard-section">
-                        <h3><i class="fas fa-file-alt me-2"></i>All Applications</h3>
-                        <div id="allApplicationsList"><div class="alert alert-info">Loading applications...</div></div>
-                    </div>
-
-                    <!-- Posted Jobs -->
-                    <div class="dashboard-section">
-                        <h3><i class="fas fa-briefcase me-2"></i>Your Posted Jobs</h3>
-                        <div id="postedJobs" class="row"></div>
-                    </div>
-                `;
-
-            loadProfile();
-            loadAllApplications();
-            loadPostedJobs();
-
-            // Profile form
-            document.getElementById('profileForm')?.addEventListener('submit', function(e) {
-                e.preventDefault();
-                const fullName = document.getElementById('profileName').value;
-                const password = document.getElementById('profilePassword').value;
-                fetch(`${API_BASE_URL}/api/users/${userId}`, {
-                    method: 'PUT',
-                    headers: {'Content-Type': 'application/json'},
-                    body: JSON.stringify({ fullName, password })
-                })
-                    .then(res => res.json())
-                    .then(data => {
-                        alert('✅ Profile updated!');
-                        localStorage.setItem('fullName', data.fullName);
-                        document.getElementById('userName').textContent = data.fullName;
-                        document.getElementById('welcomeName').textContent = data.fullName;
-                        document.getElementById('profilePassword').value = '';
-                    })
-                    .catch(err => alert('❌ Error: ' + err.message));
+            .catch(err => {
+                console.error(err);
+                document.getElementById('categoriesList').innerHTML = `<div class="empty-state text-danger"><i class="fas fa-exclamation-triangle"></i>Error loading categories</div>`;
             });
+    }
 
-            // Post job form
-            document.getElementById('postJobForm').addEventListener('submit', function(e) {
-                e.preventDefault();
-                const job = {
-                    title: document.getElementById('title').value,
-                    description: document.getElementById('description').value,
-                    company: document.getElementById('company').value,
-                    location: document.getElementById('location').value,
-                    salary: document.getElementById('salary').value,
-                    imageUrl: document.getElementById('imageUrl').value || '',
-                };
-                const categoryId = document.getElementById('category').value;
-                if (!categoryId) { alert('Please select a category'); return; }
-                fetch(`${API_BASE_URL}/api/jobs/post?employerId=${userId}&categoryId=${categoryId}`, {
-                    method: 'POST',
-                    headers: {'Content-Type': 'application/json'},
-                    body: JSON.stringify(job)
-                })
-                    .then(res => res.json())
-                    .then(data => {
-                        alert('✅ Job posted!');
-                        loadPostedJobs();
-                        document.getElementById('postJobForm').reset();
-                    })
-                    .catch(err => alert('❌ Error: ' + err.message));
-            });
-        }
+    function addCategory() {
+        const name = document.getElementById('newCategoryName').value.trim();
+        const description = document.getElementById('newCategoryDesc').value.trim();
+        if (!name) { alert('⚠️ Category name is required.'); return; }
+        fetch(`${API_BASE_URL}/api/admin/categories`, {
+            method: 'POST',
+            headers: {'Content-Type': 'application/json'},
+            body: JSON.stringify({ name, description })
+        })
+            .then(res => res.json())
+            .then(data => {
+                if (data.error) alert('❌ ' + data.error);
+                else { alert('✅ Category added!'); document.getElementById('newCategoryName').value = ''; document.getElementById('newCategoryDesc').value = ''; loadCategories(); }
+            })
+            .catch(err => alert('❌ Error: ' + err.message));
+    }
 
-        // Load all applications (across all jobs)
-        function loadAllApplications() {
-            fetch(`${API_BASE_URL}/api/jobs/all`)
+    window.deleteCategory = function(id) {
+        if (confirm('⚠️ Delete this category? This cannot be undone.')) {
+            fetch(`${API_BASE_URL}/api/admin/categories/${id}`, { method: 'DELETE' })
                 .then(res => res.json())
-                .then(jobs => {
-                    const myJobs = jobs.filter(j => j.employer && j.employer.id === Number(userId));
-                    if (myJobs.length === 0) {
-                        document.getElementById('allApplicationsList').innerHTML =
-                            `<div class="alert alert-info">You haven't posted any jobs yet.</div>`;
-                        return;
-                    }
-                    let allApps = [];
-                    let fetchPromises = myJobs.map(job =>
-                        fetch(`${API_BASE_URL}/api/applications/job-applications/${job.id}`)
-                            .then(res => res.json())
-                            .then(apps => {
-                                apps.forEach(a => a.jobTitle = job.title);
-                                allApps = allApps.concat(apps);
-                            })
-                    );
-                    Promise.all(fetchPromises).then(() => {
-                        if (allApps.length === 0) {
-                            document.getElementById('allApplicationsList').innerHTML =
-                                `<div class="alert alert-info">No applications received yet.</div>`;
-                            return;
-                        }
-                        allApps.sort((a, b) => new Date(b.appliedDate) - new Date(a.appliedDate));
-                        renderApplicationsTable(allApps);
-                    });
+                .then(data => {
+                    if (data.error) alert('❌ ' + data.error);
+                    else { alert('✅ Category deleted!'); loadCategories(); loadJobs(); }
                 })
-                .catch(err => {
-                    console.error(err);
-                    document.getElementById('allApplicationsList').innerHTML =
-                        `<div class="alert alert-danger">Error loading applications.</div>`;
-                });
+                .catch(err => alert('❌ Error: ' + err.message));
         }
+    };
 
-        function renderApplicationsTable(apps) {
-            let html = `
-                    <table class="applications-table">
-                        <thead><tr>
-                            <th>Job</th><th>Applicant</th><th>Cover Letter</th><th>Resume</th>
-                            <th>Status</th><th>Action</th><th>Date</th>
-                        </tr></thead>
-                        <tbody>
-                `;
-            apps.forEach(a => {
-                const statusClass = a.status === 'PENDING' ? 'status-pending' :
-                    a.status === 'ACCEPTED' ? 'status-accepted' : 'status-rejected';
-                html += `
-                        <tr>
-                            <td><strong>${a.jobTitle || a.job?.title || 'N/A'}</strong></td>
-                            <td>${a.jobSeeker?.fullName || 'N/A'}</td>
-                            <td>${a.coverLetter ? a.coverLetter.substring(0, 50) + (a.coverLetter.length > 50 ? '...' : '') : '—'}</td>
-                            <td>
-                                ${a.resumePath ?
-                    `<a href="${API_BASE_URL}/api/applications/download-resume/${a.resumePath}" target="_blank" class="btn btn-sm btn-success">
-                                        <i class="fas fa-file-pdf me-1"></i>Download
-                                    </a>` :
+    // =============================================================
+    //  APPLICATIONS
+    // =============================================================
+    function loadApplications() {
+        fetch(`${API_BASE_URL}/api/admin/applications`)
+            .then(res => {
+                if (!res.ok) throw new Error('Failed to fetch applications');
+                return res.json();
+            })
+            .then(apps => {
+                const container = document.getElementById('applicationsList');
+                if (!apps || apps.length === 0) {
+                    container.innerHTML = `<div class="empty-state"><i class="fas fa-file-alt"></i>No applications yet.</div>`;
+                    return;
+                }
+                container.innerHTML = `
+                        <table class="admin-table">
+                            <thead>
+                                <tr>
+                                    <th>ID</th>
+                                    <th>Job</th>
+                                    <th>Applicant</th>
+                                    <th>Cover Letter</th>
+                                    <th>Resume</th>
+                                    <th>Status</th>
+                                    <th>Action</th>
+                                    <th>Date</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                ${apps.map(a => `
+                                    <tr>
+                                        <td><strong>#${a.id}</strong></td>
+                                        <td>${a.job ? a.job.title : 'N/A'}</td>
+                                        <td>${a.jobSeeker ? a.jobSeeker.fullName : 'N/A'}</td>
+                                        <td>${a.coverLetter ? a.coverLetter.substring(0, 40) + '...' : '—'}</td>
+                                        <td>
+                                            ${a.resumePath ?
+                    `<a href="${API_BASE_URL}/api/applications/download-resume/${a.resumePath}" target="_blank" class="btn btn-success-sm">
+                                                    <i class="fas fa-download me-1"></i>Download
+                                                </a>` :
                     '<span class="text-muted">No resume</span>'
                 }
-                            </td>
-                            <td><span class="status-badge ${statusClass}">${a.status}</span></td>
-                            <td>
-                                <select class="form-select form-select-sm" style="width:130px; display:inline-block;" onchange="updateStatus(${a.id}, this.value)">
-                                    <option value="PENDING" ${a.status === 'PENDING' ? 'selected' : ''}>Pending</option>
-                                    <option value="ACCEPTED" ${a.status === 'ACCEPTED' ? 'selected' : ''}>Accept</option>
-                                    <option value="REJECTED" ${a.status === 'REJECTED' ? 'selected' : ''}>Reject</option>
-                                </select>
-                            </td>
-                            <td>${new Date(a.appliedDate).toLocaleDateString()}</td>
-                        </tr>
-                    `;
-            });
-            html += `</tbody></table>`;
-            document.getElementById('allApplicationsList').innerHTML = html;
-        }
-
-        // Load posted jobs (with edit/delete)
-        function loadPostedJobs() {
-            fetch(`${API_BASE_URL}/api/jobs/all`)
-                .then(res => res.json())
-                .then(jobs => {
-                    const myJobs = jobs.filter(j => j.employer && j.employer.id === Number(userId));
-                    const container = document.getElementById('postedJobs');
-                    if (myJobs.length === 0) {
-                        container.innerHTML = `<div class="col-12"><div class="alert alert-info">You haven't posted any jobs yet.</div></div>`;
-                        return;
-                    }
-                    container.innerHTML = myJobs.map(j => `
-                            <div class="col-md-6 col-lg-4">
-                                <div class="card job-card">
-                                    ${j.imageUrl ? `<img src="${j.imageUrl}" class="card-img-top" alt="${j.title}">` :
-                        `<div class="card-img-top d-flex align-items-center justify-content-center bg-secondary text-white" style="height:150px;">
-                                            <i class="fas fa-briefcase fa-3x"></i>
-                                        </div>`}
-                                    <div class="card-body">
-                                        <span class="category-tag">${j.category ? j.category.name : 'Uncategorized'}</span>
-                                        <h5 class="card-title">${j.title}</h5>
-                                        <p class="company"><i class="fas fa-building me-2"></i>${j.company}</p>
-                                        <p class="salary"><i class="fas fa-dollar-sign me-1"></i>${j.salary}</p>
-                                        <div class="d-flex gap-2 flex-wrap">
-                                            <button class="btn btn-primary btn-sm" onclick="viewApplicants(${j.id})">
-                                                <i class="fas fa-users me-1"></i>Applicants
-                                            </button>
-                                            <button class="btn btn-warning btn-sm" onclick="editJob(${j.id})">
-                                                <i class="fas fa-edit me-1"></i>Edit
-                                            </button>
-                                            <button class="btn btn-danger btn-sm" onclick="deleteJob(${j.id})">
-                                                <i class="fas fa-trash me-1"></i>Delete
-                                            </button>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                        `).join('');
-                })
-                .catch(err => console.error('Error loading posted jobs:', err));
-        }
-
-        // View applicants (modal)
-        window.viewApplicants = function(jobId) {
-            fetch(`${API_BASE_URL}/api/applications/job-applications/${jobId}`)
-                .then(res => res.json())
-                .then(apps => {
-                    let html = '<div class="modal-content p-3">';
-                    if (apps.length === 0) {
-                        html += '<p>No applicants yet.</p>';
-                    } else {
-                        apps.forEach(a => {
-                            const statusClass = a.status === 'PENDING' ? 'status-pending' :
-                                a.status === 'ACCEPTED' ? 'status-accepted' : 'status-rejected';
-                            html += `
-                                    <div class="border-bottom py-2">
-                                        <p><strong>${a.jobSeeker.fullName}</strong> (${a.jobSeeker.email})</p>
-                                        <p><em>Cover Letter:</em> ${a.coverLetter || 'N/A'}</p>
-                                        <p><strong>Status:</strong>
+                                        </td>
+                                        <td><span class="status-badge ${a.status === 'PENDING' ? 'status-pending' : a.status === 'ACCEPTED' ? 'status-accepted' : 'status-rejected'}">${a.status}</span></td>
+                                        <td>
                                             <select class="form-select form-select-sm" style="width:130px; display:inline-block;" onchange="updateStatus(${a.id}, this.value)">
                                                 <option value="PENDING" ${a.status === 'PENDING' ? 'selected' : ''}>Pending</option>
                                                 <option value="ACCEPTED" ${a.status === 'ACCEPTED' ? 'selected' : ''}>Accept</option>
                                                 <option value="REJECTED" ${a.status === 'REJECTED' ? 'selected' : ''}>Reject</option>
                                             </select>
-                                        </p>
-                                        ${a.resumePath ? `<p><a href="${API_BASE_URL}/api/applications/download-resume/${a.resumePath}" target="_blank" class="btn btn-sm btn-success"><i class="fas fa-file-pdf me-1"></i>Download Resume</a></p>` : ''}
-                                        <hr>
-                                    </div>
-                                `;
-                        });
-                    }
-                    html += `<button class="btn btn-secondary mt-2" onclick="this.closest('.modal-content').parentElement.remove()">Close</button></div>`;
-                    const modal = document.createElement('div');
-                    modal.style.cssText = 'position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.5); display:flex; justify-content:center; align-items:center; z-index:9999;';
-                    modal.innerHTML = `<div style="background:#fff; border-radius:20px; max-width:600px; width:90%; max-height:80vh; overflow-y:auto; padding:20px;">${html}</div>`;
-                    document.body.appendChild(modal);
-                    modal.addEventListener('click', function(e) { if (e.target === this) this.remove(); });
-                });
-        };
-
-        // Edit Job
-        window.editJob = function(jobId) {
-            fetch(`${API_BASE_URL}/api/jobs/${jobId}`)
-                .then(res => res.json())
-                .then(job => {
-                    fetch(`${API_BASE_URL}/api/admin/categories`)
-                        .then(res => res.json())
-                        .then(cats => {
-                            const modal = document.createElement('div');
-                            modal.style.cssText = 'position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.5); display:flex; justify-content:center; align-items:center; z-index:9999;';
-                            modal.innerHTML = `
-                                    <div style="background:#fff; border-radius:20px; max-width:600px; width:90%; padding:30px;">
-                                        <h3 class="mb-3">Edit Job</h3>
-                                        <form id="editJobForm">
-                                            <div class="mb-2"><label>Title</label><input type="text" id="editTitle" value="${job.title}" class="form-control" required></div>
-                                            <div class="mb-2"><label>Description</label><textarea id="editDescription" class="form-control" rows="3" required>${job.description}</textarea></div>
-                                            <div class="mb-2"><label>Company</label><input type="text" id="editCompany" value="${job.company}" class="form-control" required></div>
-                                            <div class="mb-2"><label>Location</label><input type="text" id="editLocation" value="${job.location}" class="form-control" required></div>
-                                            <div class="mb-2"><label>Salary</label><input type="text" id="editSalary" value="${job.salary}" class="form-control" required></div>
-                                            <div class="mb-2"><label>Image URL</label><input type="text" id="editImageUrl" value="${job.imageUrl || ''}" class="form-control"></div>
-                                            <div class="mb-2"><label>Category</label>
-                                                <select id="editCategory" class="form-control">
-                                                    ${cats.map(c => `<option value="${c.id}" ${c.id === job.category.id ? 'selected' : ''}>${c.name}</option>`).join('')}
-                                                </select>
-                                            </div>
-                                            <button type="submit" class="btn btn-primary w-100 mt-2">Save Changes</button>
-                                            <button type="button" class="btn btn-secondary w-100 mt-2" onclick="this.closest('div[style]').remove()">Cancel</button>
-                                        </form>
-                                    </div>
-                                `;
-                            document.body.appendChild(modal);
-                            modal.addEventListener('click', function(e) { if (e.target === this) this.remove(); });
-
-                            document.getElementById('editJobForm').addEventListener('submit', function(e) {
-                                e.preventDefault();
-                                const updatedJob = {
-                                    title: document.getElementById('editTitle').value,
-                                    description: document.getElementById('editDescription').value,
-                                    company: document.getElementById('editCompany').value,
-                                    location: document.getElementById('editLocation').value,
-                                    salary: document.getElementById('editSalary').value,
-                                    imageUrl: document.getElementById('editImageUrl').value
-                                };
-                                const categoryId = document.getElementById('editCategory').value;
-                                fetch(`${API_BASE_URL}/api/jobs/${jobId}?categoryId=${categoryId}`, {
-                                    method: 'PUT',
-                                    headers: {'Content-Type': 'application/json'},
-                                    body: JSON.stringify(updatedJob)
-                                })
-                                    .then(res => res.json())
-                                    .then(data => {
-                                        alert('✅ Job updated!');
-                                        modal.remove();
-                                        loadPostedJobs();
-                                    })
-                                    .catch(err => alert('❌ Error: ' + err.message));
-                            });
-                        });
-                })
-                .catch(err => alert('❌ Error loading job: ' + err.message));
-        };
-
-        // Delete Job
-        window.deleteJob = function(jobId) {
-            if (confirm('⚠️ Delete this job? This cannot be undone.')) {
-                fetch(`${API_BASE_URL}/api/jobs/${jobId}`, { method: 'DELETE' })
-                    .then(res => res.json())
-                    .then(data => {
-                        alert('✅ Job deleted!');
-                        loadPostedJobs();
-                        loadAllApplications();
-                    })
-                    .catch(err => alert('❌ Error: ' + err.message));
-            }
-        };
-
-        // Profile load
-        function loadProfile() {
-            fetch(`${API_BASE_URL}/api/users/${userId}`)
-                .then(res => res.json())
-                .then(user => {
-                    document.getElementById('profileName').value = user.fullName || '';
-                })
-                .catch(err => console.error('Profile load error:', err));
-        }
-    }
-
-        // =============================================================
-        //  5. JOB SEEKER DASHBOARD
-    // =============================================================
-    else if (role === 'JOB_SEEKER') {
-        document.getElementById('roleSpecific').innerHTML = `
-                <!-- Profile -->
-                <div class="dashboard-section">
-                    <h3><i class="fas fa-user-edit me-2"></i>My Profile</h3>
-                    <form id="profileForm">
-                        <div class="row g-3">
-                            <div class="col-md-6">
-                                <label class="form-label">Full Name</label>
-                                <input type="text" id="profileName" class="form-control" placeholder="Your full name">
-                            </div>
-                            <div class="col-md-6">
-                                <label class="form-label">New Password (leave empty to keep current)</label>
-                                <input type="password" id="profilePassword" class="form-control" placeholder="New password">
-                            </div>
-                            <div class="col-12">
-                                <button type="submit" class="btn btn-primary"><i class="fas fa-save me-2"></i>Update Profile</button>
-                            </div>
-                        </div>
-                    </form>
-                </div>
-
-                <!-- Available Jobs -->
-                <div class="dashboard-section">
-                    <h3><i class="fas fa-search me-2"></i>Available Jobs</h3>
-                    <div class="row g-3 mb-3">
-                        <div class="col-md-8">
-                            <input type="text" id="searchInput" class="form-control" placeholder="Search jobs..." onkeyup="searchJobs()">
-                        </div>
-                        <div class="col-md-4">
-                            <button class="btn btn-primary w-100" onclick="searchJobs()"><i class="fas fa-search me-2"></i>Search</button>
-                        </div>
-                    </div>
-                    <div id="jobList" class="row"></div>
-                    <div class="pagination-controls" id="paginationControls"></div>
-                </div>
-
-                <!-- My Applications -->
-                <div class="dashboard-section">
-                    <h3><i class="fas fa-file-alt me-2"></i>My Applications</h3>
-                    <div id="myApplications"></div>
-                </div>
-            `;
-
-        loadProfile();
-        let currentPage = 0, totalPages = 0, pageSize = 10, currentKeyword = '';
-
-        function loadJobs(keyword = '', page = 0) {
-            let url = `${API_BASE_URL}/api/jobs/all?page=${page}&size=${pageSize}`;
-            if (keyword) {
-                url = `${API_BASE_URL}/api/jobs/search?keyword=${encodeURIComponent(keyword)}&page=${page}&size=${pageSize}`;
-            }
-            fetch(url)
-                .then(res => res.json())
-                .then(data => {
-                    const jobs = data.jobs || [];
-                    totalPages = data.totalPages || 0;
-                    currentPage = data.currentPage || 0;
-                    displayJobs(jobs);
-                    renderPaginationControls();
-                })
-                .catch(err => console.error('Jobs error:', err));
-        }
-
-        function displayJobs(jobs) {
-            const container = document.getElementById('jobList');
-            if (jobs.length === 0) {
-                container.innerHTML = `<div class="col-12"><div class="alert alert-info">No jobs found.</div></div>`;
-                return;
-            }
-            container.innerHTML = jobs.map(j => `
-                    <div class="col-md-6 col-lg-4">
-                        <div class="card job-card">
-                            ${j.imageUrl ? `<img src="${j.imageUrl}" class="card-img-top" alt="${j.title}">` :
-                `<div class="card-img-top d-flex align-items-center justify-content-center bg-secondary text-white" style="height:150px;">
-                                    <i class="fas fa-briefcase fa-3x"></i>
-                                </div>`}
-                            <div class="card-body">
-                                <span class="category-tag">${j.category ? j.category.name : 'Uncategorized'}</span>
-                                <h5 class="card-title">${j.title}</h5>
-                                <p class="company"><i class="fas fa-building me-2"></i>${j.company} <span class="text-muted ms-2"><i class="fas fa-map-marker-alt me-1"></i>${j.location}</span></p>
-                                <p class="card-text small">${j.description.substring(0, 80)}${j.description.length > 80 ? '...' : ''}</p>
-                                <p class="salary"><i class="fas fa-dollar-sign me-1"></i>${j.salary}</p>
-                                <button class="btn btn-primary btn-sm w-100" onclick="applyJob(${j.id})">
-                                    <i class="fas fa-paper-plane me-1"></i>Apply
-                                </button>
-                            </div>
-                        </div>
-                    </div>
-                `).join('');
-        }
-
-        function renderPaginationControls() {
-            const container = document.getElementById('paginationControls');
-            if (!container) return;
-            let html = '<ul class="pagination">';
-            if (currentPage > 0) {
-                html += `<li class="page-item"><button class="page-link" onclick="loadJobs(currentKeyword, ${currentPage - 1})">Previous</button></li>`;
-            }
-            for (let i = 0; i < totalPages; i++) {
-                html += `<li class="page-item ${i === currentPage ? 'active' : ''}">
-                                <button class="page-link" onclick="loadJobs(currentKeyword, ${i})">${i + 1}</button>
-                             </li>`;
-            }
-            if (currentPage < totalPages - 1) {
-                html += `<li class="page-item"><button class="page-link" onclick="loadJobs(currentKeyword, ${currentPage + 1})">Next</button></li>`;
-            }
-            html += '</ul>';
-            container.innerHTML = html;
-        }
-
-        window.searchJobs = function() {
-            currentKeyword = document.getElementById('searchInput').value;
-            loadJobs(currentKeyword, 0);
-        };
-
-        window.applyJob = function(jobId) {
-            const modal = document.createElement('div');
-            modal.style.cssText = 'position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.5); display:flex; justify-content:center; align-items:center; z-index:9999;';
-            modal.innerHTML = `
-                    <div style="background:#fff; border-radius:20px; max-width:500px; width:90%; padding:30px;">
-                        <h3 class="mb-3">Apply for this Position</h3>
-                        <form id="applyForm">
-                            <div class="mb-3">
-                                <label class="form-label">Cover Letter</label>
-                                <textarea id="coverLetter" class="form-control" rows="3" placeholder="Why are you a good fit?" required></textarea>
-                            </div>
-                            <div class="mb-3">
-                                <label class="form-label">Upload Resume (PDF)</label>
-                                <input type="file" id="resumeFile" accept=".pdf" class="form-control" required>
-                            </div>
-                            <button type="submit" class="btn btn-primary w-100"><i class="fas fa-paper-plane me-2"></i>Submit Application</button>
-                            <button type="button" class="btn btn-secondary w-100 mt-2" onclick="this.closest('div[style]').remove()">Cancel</button>
-                        </form>
-                    </div>
-                `;
-            document.body.appendChild(modal);
-
-            document.getElementById('applyForm').addEventListener('submit', function(e) {
-                e.preventDefault();
-                const coverLetter = document.getElementById('coverLetter').value;
-                const file = document.getElementById('resumeFile').files[0];
-                if (!file) { alert('Please upload a PDF resume.'); return; }
-
-                const formData = new FormData();
-                formData.append('jobId', jobId);
-                formData.append('jobSeekerId', userId);
-                formData.append('coverLetter', coverLetter);
-                formData.append('resume', file);
-
-                fetch(`${API_BASE_URL}/api/applications/apply`, { method: 'POST', body: formData })
-                    .then(res => res.json())
-                    .then(data => {
-                        alert('✅ Application submitted!');
-                        modal.remove();
-                        loadMyApplications();
-                    })
-                    .catch(err => alert('❌ Error: ' + err.message));
-            });
-        };
-
-        function loadMyApplications() {
-            fetch(`${API_BASE_URL}/api/applications/my-applications/${userId}`)
-                .then(res => res.json())
-                .then(apps => {
-                    const container = document.getElementById('myApplications');
-                    if (apps.length === 0) {
-                        container.innerHTML = `<div class="alert alert-info">You haven't applied to any jobs yet.</div>`;
-                        return;
-                    }
-                    container.innerHTML = apps.map(a => `
-                            <div class="card job-card">
-                                <div class="card-body">
-                                    <h5>${a.job.title}
-                                        <span class="badge ${a.status === 'PENDING' ? 'bg-warning' : a.status === 'ACCEPTED' ? 'bg-success' : 'bg-danger'}">
-                                            ${a.status}
-                                        </span>
-                                    </h5>
-                                    <p><strong>${a.job.company}</strong> - ${a.job.location}</p>
-                                    <p><em>Cover Letter:</em> ${a.coverLetter || 'N/A'}</p>
-                                    ${a.resumePath ? `<p><a href="${API_BASE_URL}/api/applications/download-resume/${a.resumePath}" target="_blank" class="btn btn-sm btn-success"><i class="fas fa-file-pdf me-1"></i>Download Resume</a></p>` : ''}
-                                </div>
-                            </div>
-                        `).join('');
-                });
-        }
-
-        function loadProfile() {
-            fetch(`${API_BASE_URL}/api/users/${userId}`)
-                .then(res => res.json())
-                .then(user => {
-                    document.getElementById('profileName').value = user.fullName || '';
-                })
-                .catch(err => console.error('Profile load error:', err));
-        }
-
-        document.getElementById('profileForm')?.addEventListener('submit', function(e) {
-            e.preventDefault();
-            const fullName = document.getElementById('profileName').value;
-            const password = document.getElementById('profilePassword').value;
-            fetch(`${API_BASE_URL}/api/users/${userId}`, {
-                method: 'PUT',
-                headers: {'Content-Type': 'application/json'},
-                body: JSON.stringify({ fullName, password })
+                                        </td>
+                                        <td>${new Date(a.appliedDate).toLocaleDateString()}</td>
+                                    </tr>
+                                `).join('')}
+                            </tbody>
+                        </table>
+                    `;
             })
-                .then(res => res.json())
-                .then(data => {
-                    alert('✅ Profile updated!');
-                    localStorage.setItem('fullName', data.fullName);
-                    document.getElementById('userName').textContent = data.fullName;
-                    document.getElementById('welcomeName').textContent = data.fullName;
-                    document.getElementById('profilePassword').value = '';
-                })
-                .catch(err => alert('❌ Error: ' + err.message));
-        });
-
-        // Initial load
-        loadJobs('', 0);
-        loadMyApplications();
+            .catch(err => {
+                console.error(err);
+                document.getElementById('applicationsList').innerHTML =
+                    `<div class="empty-state text-danger"><i class="fas fa-exclamation-triangle"></i>Error loading applications</div>`;
+            });
     }
+
+    // =============================================================
+    //  CHARTS
+    // =============================================================
+    function loadCharts() {
+        fetch(`${API_BASE_URL}/api/admin/stats/jobs-by-category`)
+            .then(res => {
+                if (!res.ok) throw new Error('Failed to fetch jobs by category');
+                return res.json();
+            })
+            .then(data => {
+                const ctx = document.getElementById('jobsByCategoryChart').getContext('2d');
+                new Chart(ctx, {
+                    type: 'pie',
+                    data: {
+                        labels: Object.keys(data),
+                        datasets: [{
+                            data: Object.values(data),
+                            backgroundColor: ['#0d6efd', '#6610f2', '#28a745', '#ffc107', '#dc3545', '#20c997']
+                        }]
+                    },
+                    options: { responsive: true, maintainAspectRatio: false }
+                });
+            })
+            .catch(err => console.error('Chart error (jobs by category):', err));
+
+        fetch(`${API_BASE_URL}/api/admin/stats/applications-by-status`)
+            .then(res => {
+                if (!res.ok) throw new Error('Failed to fetch applications by status');
+                return res.json();
+            })
+            .then(data => {
+                const ctx = document.getElementById('applicationsByStatusChart').getContext('2d');
+                new Chart(ctx, {
+                    type: 'bar',
+                    data: {
+                        labels: Object.keys(data),
+                        datasets: [{
+                            label: 'Applications',
+                            data: Object.values(data),
+                            backgroundColor: ['#ffc107', '#28a745', '#dc3545']
+                        }]
+                    },
+                    options: { responsive: true, maintainAspectRatio: false }
+                });
+            })
+            .catch(err => console.error('Chart error (applications by status):', err));
+    }
+
+    // =============================================================
+    //  LOAD ALL
+    // =============================================================
+    window.onload = function() {
+        loadUsers();
+        loadJobs();
+        loadCategories();
+        loadApplications();
+        loadCharts();
+    };
 </script>
 </body>
 </html>
