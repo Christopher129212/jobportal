@@ -26,33 +26,27 @@ public class UserService {
     @Autowired
     private PasswordEncoder passwordEncoder;
 
-    // ----- REGISTER -----
     public User registerUser(User user) {
         user.setPassword(passwordEncoder.encode(user.getPassword()));
         return userRepository.save(user);
     }
 
-    // ----- FIND BY EMAIL -----
     public Optional<User> findByEmail(String email) {
         return userRepository.findByEmail(email);
     }
 
-    // ----- FIND BY ID -----
     public Optional<User> findById(Long id) {
         return userRepository.findById(id);
     }
 
-    // ----- CHECK PASSWORD -----
     public boolean checkPassword(String rawPassword, String encodedPassword) {
         return passwordEncoder.matches(rawPassword, encodedPassword);
     }
 
-    // ----- GET ALL USERS (for Admin) -----
     public List<User> getAllUsers() {
         return userRepository.findAll();
     }
 
-    // ----- DELETE USER WITH CASCADE -----
     @Transactional
     public void deleteUser(Long id) {
         User user = userRepository.findById(id).orElse(null);
@@ -68,7 +62,6 @@ public class UserService {
         userRepository.delete(user);
     }
 
-    // ----- UPDATE PROFILE -----
     public User updateProfile(Long userId, String fullName, String password) {
         User user = userRepository.findById(userId).orElse(null);
         if (user == null) return null;
