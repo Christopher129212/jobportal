@@ -33,7 +33,9 @@ public class AdminController {
     @Autowired
     private CategoryService categoryService;
 
+    // =============================================================
     // USERS
+    // =============================================================
     @GetMapping("/users")
     public List<User> getAllUsers() {
         return userService.getAllUsers();
@@ -53,13 +55,14 @@ public class AdminController {
             userService.deleteUser(id);
             return ResponseEntity.ok(Map.of("message", "User deleted successfully"));
         } catch (Exception e) {
-            // Log the error (optional) and return a meaningful message
             e.printStackTrace();
             return ResponseEntity.status(500).body(Map.of("error", e.getMessage()));
         }
     }
 
+    // =============================================================
     // JOBS
+    // =============================================================
     @GetMapping("/jobs")
     public List<Job> getAllJobs() {
         return jobService.getAllJobs();
@@ -71,7 +74,9 @@ public class AdminController {
         return ResponseEntity.ok(Map.of("message", "Job deleted"));
     }
 
+    // =============================================================
     // CATEGORIES
+    // =============================================================
     @GetMapping("/categories")
     public List<Category> getAllCategories() {
         return categoryService.getAllCategories();
@@ -95,13 +100,17 @@ public class AdminController {
         return ResponseEntity.ok(Map.of("message", "Category deleted"));
     }
 
+    // =============================================================
     // APPLICATIONS
+    // =============================================================
     @GetMapping("/applications")
     public List<Application> getAllApplications() {
         return applicationService.getAllApplications();
     }
 
-    // STATS
+    // =============================================================
+    // STATS (for charts)
+    // =============================================================
     @GetMapping("/stats/jobs-by-category")
     public Map<String, Long> getJobsByCategory() {
         return jobService.getAllJobs().stream()

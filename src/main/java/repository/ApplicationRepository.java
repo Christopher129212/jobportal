@@ -7,4 +7,7 @@ import java.util.List;
 public interface ApplicationRepository extends JpaRepository<Application, Long> {
     List<Application> findByJobSeekerId(Long jobSeekerId);
     List<Application> findByJobId(Long jobId);
+
+    // Delete all applications by a specific job seeker
+    void deleteByJobSeekerId(Long jobSeekerId);
 }
