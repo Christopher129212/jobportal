@@ -1,6 +1,8 @@
 package com.example.jobportal.service;
 
 import com.example.jobportal.model.User;
+import com.example.jobportal.repository.ApplicationRepository;
+import com.example.jobportal.repository.JobRepository;
 import com.example.jobportal.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -15,42 +17,50 @@ public class UserService {
     private UserRepository userRepository;
 
     @Autowired
+    private ApplicationRepository applicationRepository;
+
+    @Autowired
+    private JobRepository jobRepository;
+
+    @Autowired
     private PasswordEncoder passwordEncoder;
 
-    // ----- REGISTER USER -----
     public User registerUser(User user) {
         user.setPassword(passwordEncoder.encode(user.getPassword()));
         return userRepository.save(user);
     }
 
-    // ----- FIND BY EMAIL -----
     public Optional<User> findByEmail(String email) {
         return userRepository.findByEmail(email);
     }
 
-    // ----- FIND BY ID -----
     public Optional<User> findById(Long id) {
         return userRepository.findById(id);
     }
 
-    // ----- CHECK PASSWORD -----
     public boolean checkPassword(String rawPassword, String encodedPassword) {
         return passwordEncoder.matches(rawPassword, encodedPassword);
     }
 
-    // ----- GET ALL USERS (for Admin) -----
     public List<User> getAllUsers() {
         return userRepository.findAll();
     }
 
-    // ----- DELETE USER (for Admin) -----
+    // ----- DELETE USER WITH ASSOCIATIONS -----
     public void deleteUser(Long id) {
-        userRepository.deleteById(id);
+        User user = userRepository.findById(id).orElse(null);
+        if (user == null) return;
+
+        // 1. Delete all applications made by this user (as job seeker)
+        applicationRepository.deleteAll(user.getApplications());
+
+        // 2. Delete all jobs posted by this user (as employer)
+        jobRepository.deleteAll(user.getJobs());
+
+        // 3. Finally delete the user itself
+        userRepository.delete(user);
     }
 
-    // ==========================================================
-    //  NEW: UPDATE PROFILE (name + password)
-    // ==========================================================
     public User updateProfile(Long userId, String fullName, String password) {
         User user = userRepository.findById(userId).orElse(null);
         if (user == null) return null;
